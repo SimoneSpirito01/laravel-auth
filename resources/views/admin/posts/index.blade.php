@@ -26,7 +26,7 @@
                                     <td>{{$post->title}}</td>
                                     <td>{{$post->content}}</td>
                                     <td>{{($post->published == 0) ? 'No' : 'Yes'}}</td>
-                                    <td><button type="button" class="btn btn-info"><a class="text-white" href="{{route('posts.show', $post->id)}}">View</a></button></td>
+                                    <td><button type="button" class="btn btn-info"><a class="text-white" href="{{route('posts.show', $post->slug)}}">View</a></button></td>
                                 </tr>
                               @endforeach
                             </tbody>

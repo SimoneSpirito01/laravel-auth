@@ -46,8 +46,9 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Post $post)
+    public function show($id)
     {
+        $post = Post::where('slug', $id)->first();
         return view('admin.posts.show', compact('post'));
     }
 

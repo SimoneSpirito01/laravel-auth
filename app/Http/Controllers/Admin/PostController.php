@@ -5,9 +5,19 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Post;
+use Illuminate\Support\Str;
+use Symfony\Component\VarDumper\Cloner\Data;
 
 class PostController extends Controller
 {
+
+    protected $validation = [
+        'title' => 'required|string|max:100',
+        'content' => 'required',
+        'published' => 'sometimes|accepted'
+    ];
+
+
     /**
      * Display a listing of the resource.
      *
@@ -26,7 +36,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.posts.create');
     }
 
     /**
@@ -37,7 +47,26 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+
+        $request->validate($this->validation);
+
+        $newPost = new Post();
+        $newPost->title = $data['title'];
+        $newPost->content = $data['content'];
+        $newPost->published = isset($data['published']);
+
+        $slug = Str::of($newPost->title)->slug('-');
+        $count = 1;
+        while(Post::where('slug', $slug)->first()) {
+            $slug = Str::of($newPost->title)->slug('-').'-'.$count;
+            $count++;
+        }
+
+        $newPost->slug = $slug;
+        $newPost->save();
+
+        return redirect()->route('posts.show', $newPost->slug);
     }
 
     /**
@@ -60,7 +89,8 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        //
+        $post = Post::where('slug', $id)->first();
+        return view('admin.posts.edit', compact('post'));
     }
 
     /**
@@ -72,7 +102,33 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = $request->all();
+        $post = Post::where('slug', $id)->first();
+
+        $request->validate($this->validation);
+
+        if($data['title'] != $post->title) {
+            $post->title = $data['title'];
+            $slug = Str::of($data['title'])->slug('-');
+            $count = 1;
+
+            if($slug != $post->slug) {
+                while(Post::where('slug', $slug)->first()) {
+                    $slug = Str::of($data['title'])->slug('-').'-'.$count;
+                    $count++;
+                }
+            }
+
+            $post->slug = $slug;
+            
+        }
+
+        $post->content = $data['content'];
+        $post->published = isset($data['published']);
+        $post->save();
+
+        return redirect()->route('posts.show', $post->slug);
+
     }
 
     /**
@@ -83,6 +139,9 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $post = Post::where('slug', $id)->first();
+        $post->delete();
+
+        return redirect()->route('posts.index');
     }
 }

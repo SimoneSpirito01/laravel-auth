@@ -31,17 +31,45 @@
                                     <td>{{($post->published == 0) ? 'No' : 'Yes'}}</td>
                                     <td>
                                       <button type="button" class="btn btn-info"><a class="text-white" href="{{route('posts.show', $post->slug)}}">View</a></button>
-                                      <button type="button" class="btn btn-warning mt-1"><a class="text-white" href="{{route('posts.edit', $post->slug)}}">Edit</a></button>
-                                      <form action="{{route('posts.destroy', $post->slug)}}" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger mt-1">Delete</button>
-                                      </form>
+                                      <button type="button" class="btn btn-warning"><a class="text-white" href="{{route('posts.edit', $post->slug)}}">Edit</a></button>
+                                      <button type="button" class="btn btn-danger mt-1 btnToggle" data-toggle="modal" data-target="#exampleModal" data-slug="{{$post->slug}}">Delete</button>
                                     </td>
                                 </tr>
                               @endforeach
                             </tbody>
                           </table>
+                          <!-- Modal -->
+                          <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title text-uppercase" id="exampleModalLabel">Attention! ❌</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <div class="modal-body">
+                                  Are you sure you want to delete this post?
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                  <form action="{{route('posts.destroy', $post->slug)}}" method="POST" class="my_form">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" class="btn btn-danger toastClicker my_button">Delete</button>
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- Toast -->
+                          <div class="position-fixed bottom-0 right-0 p-3" style="z-index: 5; right: 0; top: 60px;">
+                            <div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
+                              <div class="toast-body">
+                                Post successfully deleted! 🗑
+                              </div>
+                            </div>
+                          </div>
                     </div>
                 </div>
             </div>

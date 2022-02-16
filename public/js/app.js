@@ -37270,6 +37270,31 @@ module.exports = function(module) {
 
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
+$(document).ready(function () {
+  $(".toastClicker").click(function () {
+    $('.toast').toast('show');
+  });
+});
+var buttonsToggle = document.getElementsByClassName('btnToggle');
+var form = document.querySelector('.my_form');
+var buttonDelete = document.querySelector('.my_button');
+var postSlug;
+
+if (buttonsToggle != null) {
+  for (var i = 0; i < buttonsToggle.length; i++) {
+    buttonsToggle[i].addEventListener('click', function () {
+      postSlug = this.getAttribute('data-slug');
+    });
+  }
+}
+
+if (buttonDelete != null) {
+  buttonDelete.addEventListener('click', function () {
+    form.setAttribute('action', 'posts/' + postSlug);
+    form.submit();
+  });
+}
+
 /***/ }),
 
 /***/ "./resources/js/bootstrap.js":
